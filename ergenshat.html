@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BaboEba1 - Anti-Bug Player</title>
+    <!-- HLS библиотека за стриймване на живо -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            /* Тук вече търси точно bg.png, както ти е картинката на екрана */
+            background-image: url('bg.png');
+            background-repeat: repeat;
+            background-size: auto;
+            background-color: #121212;
+            color: #d1d1d1;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        /* Тъмен полупрозрачен слой над фона, за да изпъква видеото */
+        .overlay {
+            background-color: rgba(12, 12, 12, 0.90);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: 100%;
+        }
+        header {
+            background-color: rgba(25, 25, 25, 0.95);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 20px;
+            color: #fff;
+            letter-spacing: 0.5px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 12px;
+        }
+        .btn {
+            background-color: #444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+            font-size: 13px;
+        }
+        .btn:hover {
+            background-color: #666;
+        }
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 25px;
+        }
+        .player-wrapper {
+            width: 100%;
+            max-width: 1100px;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            overflow: hidden;
+            border: 1px solid #333;
+            position: relative;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+            outline: none;
+        }
+        .controls-bar {
+            margin-top: 15px;
+            max-width: 1100px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(25, 25, 25, 0.95);
+            padding: 12px 20px;
+            border-radius: 6px;
+            border: 1px solid #333;
+            box-sizing: border-box;
+            font-size: 13px;
+        }
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+
+<div class="overlay">
+    <header>
+        <h1>BaboEba1</h1>
+        <div class="nav-links">
+            <button class="btn" onclick="goToLive()">🔴 Към живо</button>
+            <button class="btn" onclick="reloadStream()">Презареди</button>
+        </div>
+    </header>
+
+    <main>
+        <div class="player-wrapper">
+            <video id="videoPlayer" controls autoplay muted></video>
+        </div>
+
+        <div class="controls-bar">
+            <div class="status-indicator">
+                <span style="color: #4CAF50; font-weight: bold;">●</span> Статус: <span id="statusText" style="color: #fff;">Зареждане...</span>
+            </div>
+            <div style="color: #777;">Без реклами и без бъгове</div>
+        </div>
+    </main>
+</div>
+
+    <script>
+        const video = document.getElementById('videoPlayer');
+        const videoSrc = 'https://videostitcher.googleapis.com/v1/projects/239117298520/locations/europe-west1/daiLiveSessions/73970f4b-bacf-4a02-93f8-3d9162db7936-gam/renditions/bf8efdbc8fc6466e6899953587cbe011369555939a56b310b47636fbe97f4a95.m3u8?vsauth=Ae7QbmvEe-b5keEn3j1QtS7gsO4_';
+        const statusText = document.getElementById('statusText');
+
+        function goToLive() {
+            if (video.duration && !isNaN(video.duration)) {
+                video.currentTime = video.duration - 1;
+                statusText.textContent = "На живо";
+            }
+        }
+
+        function reloadStream() {
+            video.src = "";
+            initPlayer();
+        }
+
+        function initPlayer() {
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(videoSrc);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    statusText.textContent = "В ефир (На живо)";
+                    video.play().catch(e => {
+                        statusText.textContent = "Кликни Play на видеото";
+                    });
+                    setTimeout(goToLive, 1000);
+                });
+                hls.on(Hls.Events.ERROR, function(event, data) {
+                    if (data.fatal) {
+                        statusText.textContent = "Грешка в стрийма. Натисни Презареди";
+                    }
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = videoSrc;
+                video.addEventListener('loadedmetadata', function() {
+                    statusText.textContent = "В ефир (На живо)";
+                    video.play();
+                    goToLive();
+                });
+            }
+        }
+
+        initPlayer();
+    </script>
+</body>
+</html>
