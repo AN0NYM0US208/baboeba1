@@ -10,33 +10,33 @@
         body {
             margin: 0;
             padding: 0;
-            /* Тук вече търси точно bg.png, както ти е картинката на екрана */
             background-image: url('bg.png');
             background-repeat: repeat;
             background-size: auto;
-            background-color: #121212;
+            background-color: #1b1b1b;
             color: #d1d1d1;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
-        /* Тъмен полупрозрачен слой над фона, за да изпъква видеото */
+        /* Намален тъмен слой, за да се вижда ярко фоновата ти картинка */
         .overlay {
-            background-color: rgba(12, 12, 12, 0.90);
+            background-color: rgba(10, 10, 10, 0.55);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
             width: 100%;
         }
         header {
-            background-color: rgba(25, 25, 25, 0.95);
+            background-color: rgba(20, 20, 20, 0.85);
             padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid #333;
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
         }
         header h1 {
             margin: 0;
@@ -49,9 +49,9 @@
             gap: 12px;
         }
         .btn {
-            background-color: #444;
+            background-color: #333;
             color: white;
-            border: none;
+            border: 1px solid #555;
             padding: 8px 16px;
             border-radius: 4px;
             cursor: pointer;
@@ -60,7 +60,7 @@
             font-size: 13px;
         }
         .btn:hover {
-            background-color: #666;
+            background-color: #555;
         }
         main {
             flex: 1;
@@ -78,7 +78,7 @@
             border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.8);
             overflow: hidden;
-            border: 1px solid #333;
+            border: 1px solid #444;
             position: relative;
         }
         video {
@@ -93,12 +93,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(25, 25, 25, 0.95);
+            background: rgba(20, 20, 20, 0.85);
             padding: 12px 20px;
             border-radius: 6px;
-            border: 1px solid #333;
+            border: 1px solid #444;
             box-sizing: border-box;
             font-size: 13px;
+            backdrop-filter: blur(5px);
         }
         .status-indicator {
             display: flex;
